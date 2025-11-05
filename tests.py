@@ -1,6 +1,7 @@
 import unittest
 
-from grid import *
+from umath import *
+from universe import *
 
 class TestFeq(unittest.TestCase):
     def test_feq_zero(self):
