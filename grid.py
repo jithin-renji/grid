@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 
+import random
 from math import fabs
 from time import sleep
 
@@ -14,6 +15,21 @@ class Vec3:
         self.y = y
         self.z = z
 
+    def __neg__(self):
+        return Vec3(-self.x, -self.y, -self.z)
+
+    def __add__(self, other):
+        if not isinstance(other, Vec3):
+            return NotImplemented
+        
+        return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+    
+    def __sub__(self, other):
+        if not isinstance(other, Vec3):
+            return NotImplemented
+        
+        return Vec3(self.x - other.y, self.y - other.y, self.z - other.z)
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Vec3):
             return NotImplemented
@@ -24,25 +40,35 @@ class Vec3:
         return f"({self.x}, {self.y}, {self.z})"
 
 class PointObject:
-    def __init__(self, pos: Vec3 = Vec3(), velocity: Vec3 = Vec3(), mass: float = 0):
-        self.pos = pos                      # m
-        self.mass = mass                    # kg
-        self.velocity = velocity            # m/s
+    def __init__(self, pos: Vec3 = Vec3(), velocity: Vec3 = Vec3(), mass: float = 0, color: str = 'r'):
+        self.__pos = pos                        # m
+        self.mass = mass                        # kg
+        self.vel = velocity                     # m/s
+
+        # Plotted points for this object
+        self.X = []
+        self.Y = []
+        self.Z = []
+
+        self.color = color
+
+    def get_pos(self):
+        return self.__pos
+
+    def set_pos(self, new_pos: Vec3):
+        self.__pos = new_pos
+        self.X.append(new_pos.x)
+        self.Y.append(new_pos.y)
+        self.Z.append(new_pos.z)
 
     def __str__(self):
-        return f"PointObject(position={self.pos}, mass={self.mass})"
+        return f"PointObject(position={self.__pos}, mass={self.mass}, color={self.color})"
     
 class NewtonianUniverse:
     def __init__(self, step: float = 0.25, objs: list[PointObject] = []):
         self.step = step                    # seconds
         self.objs = objs                    # list of objects in this universe
         self.t = 0                          # universal time
-
-        # Couple X Y Z to each object
-        self.X = []
-        self.Y = []
-        self.Z = []
-        self.colors = []
 
     def begin(self, until: float = 10, real_time: bool = False):
         c = 'red'
@@ -51,16 +77,9 @@ class NewtonianUniverse:
             # Update position according to the object's
             # velocity when time is a whole number.
             for obj in self.objs:
-                self.X.append(obj.pos.x)
-                self.Y.append(obj.pos.y)
-                self.Z.append(obj.pos.z)
-                self.colors.append(c)
-
-                c = 'green' if c == 'red' else 'red'
-
-                obj.pos.x += obj.velocity.x * self.step
-                obj.pos.y += obj.velocity.y * self.step
-                obj.pos.z += obj.velocity.z * self.step
+                cur_pos = obj.get_pos()
+                new_pos = cur_pos + Vec3(obj.vel.x * self.step, obj.vel.y * self.step, obj.vel.z * self.step)
+                obj.set_pos(new_pos)
 
             if real_time:
                 sleep(self.step)
@@ -74,7 +93,9 @@ class NewtonianUniverse:
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
 
-        ax.scatter(self.X, self.Y, self.Z, c=self.colors)
+        for obj in self.objs:
+            ax.scatter(obj.X, obj.Y, obj.Z, c=obj.color)
+
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
@@ -97,7 +118,8 @@ def main():
         PointObject(
             pos=Vec3(0, 0, 0),
             velocity=Vec3(1, 5, 5),
-            mass=10
+            mass=10,
+            color='k'
         ),
         PointObject(
             pos=Vec3(5, 0, 0),
