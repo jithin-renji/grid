@@ -44,7 +44,7 @@ class NewtonianUniverse:
         self.Z = []
         self.colors = []
 
-    def begin(self, until: float = 10, real_time: bool = True):
+    def begin(self, until: float = 10, real_time: bool = False):
         c = 'red'
         while self.t < until:
             self.t += self.step
@@ -106,7 +106,7 @@ def main():
         )
     ])
 
-    universe.begin(real_time=False)
+    universe.begin()
     universe.show()
 
 if __name__ == '__main__':
