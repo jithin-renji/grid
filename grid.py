@@ -2,9 +2,11 @@
 
 import matplotlib.pyplot as plt
 
-import random
+from os import getenv
 from math import fabs
 from time import sleep
+
+REAL_TIME = True if getenv('REAL_TIME') == '1' else False
 
 def feq(a: float, b: float):
     return not fabs(a - b) > 0.001
@@ -72,6 +74,9 @@ class NewtonianUniverse:
 
     def begin(self, until: float = 10, real_time: bool = False):
         while self.t < until:
+            if self.__objects_have_collided():
+                print("<<<<<< COLLISION DETECTED >>>>>>")
+
             self.t += self.step
             # Update position according to the object's
             # velocity when time is a whole number.
@@ -109,8 +114,14 @@ class NewtonianUniverse:
     def apply_force(self):
         pass
 
-    def __check_collision(self):
-        pass
+    def __objects_have_collided(self):
+        for i, obj in enumerate(self.objs):
+            for obj2 in self.objs[i + 1:]:
+                if obj.get_pos() == obj2.get_pos():
+                    # TODO: Handle collision
+                    return True
+                
+        return False
 
 def main():
     universe = NewtonianUniverse(objs=[
@@ -127,7 +138,7 @@ def main():
         )
     ])
 
-    universe.begin()
+    universe.begin(real_time=REAL_TIME)
     universe.show()
 
 if __name__ == '__main__':
