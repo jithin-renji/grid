@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import matplotlib.pyplot as plt
+
 from math import fabs
 from time import sleep
 
@@ -36,12 +38,26 @@ class NewtonianUniverse:
         self.objs = objs                    # list of objects in this universe
         self.t = 0                          # universal time
 
+        # Couple X Y Z to each object
+        self.X = []
+        self.Y = []
+        self.Z = []
+        self.colors = []
+
     def begin(self, until: float = 10, real_time: bool = True):
+        c = 'red'
         while self.t < until:
             self.t += self.step
             # Update position according to the object's
             # velocity when time is a whole number.
             for obj in self.objs:
+                self.X.append(obj.pos.x)
+                self.Y.append(obj.pos.y)
+                self.Z.append(obj.pos.z)
+                self.colors.append(c)
+
+                c = 'green' if c == 'red' else 'red'
+
                 obj.pos.x += obj.velocity.x * self.step
                 obj.pos.y += obj.velocity.y * self.step
                 obj.pos.z += obj.velocity.z * self.step
@@ -54,6 +70,17 @@ class NewtonianUniverse:
         print("===== END =====")
         self.log()
 
+    def show(self):
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
+
+        ax.scatter(self.X, self.Y, self.Z, c=self.colors)
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+
+        plt.show()
+
     def log(self):
         print(f"t={self.t}")
         for obj in self.objs:
@@ -62,24 +89,25 @@ class NewtonianUniverse:
     def apply_force(self):
         pass
 
-    def __check_collision(self): # type: ignore
+    def __check_collision(self):
         pass
 
 def main():
     universe = NewtonianUniverse(objs=[
         PointObject(
-            pos=Vec3(1, 2, 3),
-            velocity=Vec3(1, 1, 1),
+            pos=Vec3(0, 0, 0),
+            velocity=Vec3(1, 5, 5),
             mass=10
         ),
         PointObject(
-            pos=Vec3(10, 20, 30),
-            velocity=Vec3(2, 2, 2),
+            pos=Vec3(5, 0, 0),
+            velocity=Vec3(-1, 5, 5),
             mass=10
         )
     ])
 
-    universe.begin(real_time=True)
+    universe.begin(real_time=False)
+    universe.show()
 
 if __name__ == '__main__':
     main()
