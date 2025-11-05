@@ -2,6 +2,8 @@ from umath import *
 
 import matplotlib.pyplot as plt
 
+from time import sleep
+
 class PointObject:
     def __init__(self, pos: Vec3 = Vec3(), vel: Vec3 = Vec3(), mass: float = 0, color: str = 'r'):
         self.__pos = pos                        # m
