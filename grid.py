@@ -11,9 +11,9 @@ def feq(a: float, b: float):
 
 class Vec3:
     def __init__(self, x: float = 0, y: float = 0, z: float = 0):
-        self.x = x
-        self.y = y
-        self.z = z
+        self.x = float(x)
+        self.y = float(y)
+        self.z = float(z)
 
     def __neg__(self):
         return Vec3(-self.x, -self.y, -self.z)
@@ -28,7 +28,7 @@ class Vec3:
         if not isinstance(other, Vec3):
             return NotImplemented
         
-        return Vec3(self.x - other.y, self.y - other.y, self.z - other.z)
+        return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Vec3):
@@ -40,15 +40,15 @@ class Vec3:
         return f"({self.x}, {self.y}, {self.z})"
 
 class PointObject:
-    def __init__(self, pos: Vec3 = Vec3(), velocity: Vec3 = Vec3(), mass: float = 0, color: str = 'r'):
+    def __init__(self, pos: Vec3 = Vec3(), vel: Vec3 = Vec3(), mass: float = 0, color: str = 'r'):
         self.__pos = pos                        # m
-        self.mass = mass                        # kg
-        self.vel = velocity                     # m/s
+        self.mass = float(mass)                 # kg
+        self.vel = vel                          # m/s
 
         # Plotted points for this object
-        self.X = []
-        self.Y = []
-        self.Z = []
+        self.X = [pos.x]
+        self.Y = [pos.y]
+        self.Z = [pos.z]
 
         self.color = color
 
@@ -62,16 +62,15 @@ class PointObject:
         self.Z.append(new_pos.z)
 
     def __str__(self):
-        return f"PointObject(position={self.__pos}, mass={self.mass}, color={self.color})"
+        return f"PointObject(pos={self.__pos}, vel={self.vel}, mass={self.mass}, color={self.color})"
     
 class NewtonianUniverse:
     def __init__(self, step: float = 0.25, objs: list[PointObject] = []):
         self.step = step                    # seconds
         self.objs = objs                    # list of objects in this universe
-        self.t = 0                          # universal time
+        self.t = 0                          # universal time (seconds)
 
     def begin(self, until: float = 10, real_time: bool = False):
-        c = 'red'
         while self.t < until:
             self.t += self.step
             # Update position according to the object's
@@ -117,13 +116,13 @@ def main():
     universe = NewtonianUniverse(objs=[
         PointObject(
             pos=Vec3(0, 0, 0),
-            velocity=Vec3(1, 5, 5),
+            vel=Vec3(1, 5, 5),
             mass=10,
             color='k'
         ),
         PointObject(
             pos=Vec3(5, 0, 0),
-            velocity=Vec3(-1, 5, 5),
+            vel=Vec3(-1, 5, 5),
             mass=10
         )
     ])
