@@ -3,6 +3,9 @@
 from math import fabs
 from time import sleep
 
+def feq(a: float, b: float):
+    return not fabs(a - b) > 0.001
+
 class Vec3:
     def __init__(self, x: float = 0, y: float = 0, z: float = 0):
         self.x = x
@@ -13,37 +16,36 @@ class Vec3:
         if not isinstance(other, Vec3):
             return NotImplemented
 
-        if fabs(self.x - other.x) > 0.001:
-            return False
-        
-        if fabs(self.y - other.y) > 0.001:
-            return False
-        
-        if fabs(self.z - other.z) > 0.001:
-            return False
-        
-        return True
+        return feq(self.x, other.x) and feq(self.y, other.y) and feq(self.z, other.z)
 
     def __str__(self):
         return f"({self.x}, {self.y}, {self.z})"
 
 class PointObject:
-    def __init__(self, position: Vec3 = Vec3(), velocity: Vec3 = Vec3(), mass: float = 0):
-        self.pos = position
-        self.mass = mass        # kg
+    def __init__(self, pos: Vec3 = Vec3(), velocity: Vec3 = Vec3(), mass: float = 0):
+        self.pos = pos                      # m
+        self.mass = mass                    # kg
+        self.velocity = velocity            # m/s
 
     def __str__(self):
         return f"PointObject(position={self.pos}, mass={self.mass})"
     
 class NewtonianUniverse:
     def __init__(self, step: float = 0.25, objs: list[PointObject] = []):
-        self.step = step        # seconds
-        self.objs = objs        # list of objects in this universe
-        self.t = 0              # universal time
+        self.step = step                    # seconds
+        self.objs = objs                    # list of objects in this universe
+        self.t = 0                          # universal time
 
     def begin(self, until: float = 10, real_time: bool = True):
         while self.t < until:
             self.t += self.step
+            # Update position according to the object's
+            # velocity when time is a whole number.
+            for obj in self.objs:
+                obj.pos.x += obj.velocity.x * self.step
+                obj.pos.y += obj.velocity.y * self.step
+                obj.pos.z += obj.velocity.z * self.step
+
             if real_time:
                 sleep(self.step)
                 self.log()
@@ -65,10 +67,19 @@ class NewtonianUniverse:
 
 def main():
     universe = NewtonianUniverse(objs=[
-        PointObject(position=Vec3(1, 2, 3), mass = 10)
+        PointObject(
+            pos=Vec3(1, 2, 3),
+            velocity=Vec3(1, 1, 1),
+            mass=10
+        ),
+        PointObject(
+            pos=Vec3(10, 20, 30),
+            velocity=Vec3(2, 2, 2),
+            mass=10
+        )
     ])
 
-    universe.begin()
+    universe.begin(real_time=True)
 
 if __name__ == '__main__':
     main()
