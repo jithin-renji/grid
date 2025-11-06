@@ -7,6 +7,8 @@ Make sure you have Python 3.14 installed. Install all of the required dependenci
 pip install -r requirements.txt
 ```
 
+Run `./grid.py --help` for usage information.
+
 ## TODO
 - [ ] Newtonian gravity
 - [ ] Animated trajectories
