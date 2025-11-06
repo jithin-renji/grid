@@ -5,11 +5,15 @@ import matplotlib.pyplot as plt
 
 from time import sleep
 
+G = 6.6743e-11
+
 class PointObject:
-    def __init__(self, pos: Vec3 = Vec3(), vel: Vec3 = Vec3(), mass: float = 1, color: str = 'r'):
+    def __init__(self, pos: Vec3 = Vec3(), vel: Vec3 = Vec3(), acc: Vec3 = Vec3(),
+                 mass: float = 1, color: str = 'r'):
         self.__pos = pos                        # m
         self.mass = float(mass)                 # kg
         self.vel = vel                          # m/s
+        self.acc = acc                          # m/s^2
 
         # Plotted points for this object
         self.X = [pos.x]
@@ -40,11 +44,13 @@ class NewtonianUniverse:
     def begin(self, until: float = 10, real_time: bool = False):
         while self.t < until:
             if self.__objects_have_collided():
+                print("<<< COLLISION >>>")
                 self.__handle_collisions()
 
             self.t += self.step
 
             # Update position according to the object's velocity
+            self.__accelerate()
             self.__move_objects()
 
             if real_time:
@@ -54,12 +60,6 @@ class NewtonianUniverse:
         # Print final stats
         print("===== END =====")
         self.log()
-
-    def __handle_collisions(self):
-        for obj1, obj2 in self.collisions:
-            obj1.vel, obj2.vel = self.__solve_momenta(obj1, obj2)
-
-        self.collisions.clear()
 
     def __solve_momenta(self, obj1: PointObject, obj2: PointObject) -> tuple[Vec3, Vec3]:
         m1, m2 = obj1.mass, obj2.mass
@@ -78,6 +78,39 @@ class NewtonianUniverse:
             new_pos = cur_pos + Vec3(obj.vel.x * self.step, obj.vel.y * self.step, obj.vel.z * self.step)
             obj.set_pos(new_pos)
 
+    def __accelerate(self):
+        self.__update_net_acceleration()
+        for obj in self.objs:
+            if obj.acc == 0:
+                continue
+
+            cur_vel = obj.vel
+            new_vel = cur_vel + Vec3(obj.acc.x * self.step, obj.acc.y * self.step, obj.acc.z * self.step)
+            obj.vel = new_vel
+
+    def __update_net_acceleration(self):
+        # Currently, the only force is gravity.
+        # FIXME: This works only when there are 2 objects
+        # in the universe.
+        for obj1 in self.objs:
+            for obj2 in self.objs:
+                if obj1 is obj2:
+                    continue
+
+                r_vec = obj2.get_pos() - obj1.get_pos()
+                r_hat = r_vec / r_vec.mag()
+
+                acc_mag = G * obj2.mass / (r_vec.mag() ** 2)
+                new_acc = acc_mag * r_hat
+
+                obj1.acc = new_acc
+
+    def __handle_collisions(self):
+        for obj1, obj2 in self.collisions:
+            obj1.vel, obj2.vel = self.__solve_momenta(obj1, obj2)
+
+        self.collisions.clear()
+
     def __objects_have_collided(self):
         collision_found = False
         for i, obj in enumerate(self.objs):
@@ -93,7 +126,10 @@ class NewtonianUniverse:
         ax = fig.add_subplot(projection='3d')
 
         for obj in self.objs:
-            ax.scatter(obj.X, obj.Y, obj.Z, c=obj.color)
+            ax.scatter(obj.X[:-1], obj.Y[:-1], obj.Z[-1], c=obj.color)
+
+        for obj in self.objs:
+            ax.scatter(obj.X[-1], obj.Y[-1], obj.Z[-1], c='g')
 
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
@@ -105,6 +141,3 @@ class NewtonianUniverse:
         print(f"t={self.t}")
         for obj in self.objs:
             print(f"\t{id(obj)}: {obj}")
-
-    def apply_force(self):
-        pass
