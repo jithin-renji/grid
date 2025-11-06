@@ -3,12 +3,16 @@
 from universe import *
 from umath import *
 
-from os import getenv
-
-REAL_TIME = True if getenv('REAL_TIME') == '1' else False
+import argparse
 
 def main():
-    universe = NewtonianUniverse(step=0.25, objs=[
+    parser = argparse.ArgumentParser(description="A Newtonian physics simulator.")
+    parser.add_argument('-s', '--time-step', default=0.25, help="set the simulation time step (default=0.25s)")
+    parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
+
+    args = parser.parse_args()
+
+    universe = NewtonianUniverse(step=args.time_step, objs=[
         PointObject(
             pos=Vec3(0, 0, 0),
             vel=Vec3(1, 5, 5),
@@ -22,7 +26,7 @@ def main():
         )
     ])
 
-    universe.begin(real_time=REAL_TIME)
+    universe.begin(real_time=args.real_time)
     universe.show()
 
 if __name__ == '__main__':
