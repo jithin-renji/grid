@@ -71,7 +71,7 @@ class TestPointObject(unittest.TestCase):
         po = PointObject()
         self.assertEqual(po._PointObject__pos, Vec3(0, 0, 0))
         self.assertEqual(po.vel, Vec3(0, 0, 0))
-        self.assertEqual(po.mass, 0.0)
+        self.assertEqual(po.mass, 1.0)
         self.assertEqual(po.X, [0.0])
         self.assertEqual(po.Y, [0.0])
         self.assertEqual(po.Z, [0.0])

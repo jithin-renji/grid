@@ -1,6 +1,6 @@
 from math import fabs
 
-def feq(a: float, b: float):
+def feq(a: float, b: float) -> bool:
     return not fabs(a - b) > 0.001
 
 class Vec3:

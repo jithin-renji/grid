@@ -8,17 +8,17 @@ from os import getenv
 REAL_TIME = True if getenv('REAL_TIME') == '1' else False
 
 def main():
-    universe = NewtonianUniverse(objs=[
+    universe = NewtonianUniverse(step=0.25, objs=[
         PointObject(
             pos=Vec3(0, 0, 0),
             vel=Vec3(1, 5, 5),
-            mass=10,
+            mass=20,
             color='k'
         ),
         PointObject(
             pos=Vec3(5, 0, 0),
             vel=Vec3(-1, 5, 5),
-            mass=10
+            mass=5000
         )
     ])
 
