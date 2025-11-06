@@ -6,7 +6,7 @@ from umath import *
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description="A Newtonian physics simulator.")
+    parser = argparse.ArgumentParser(description="A Newtonian physics simulator")
     parser.add_argument('-s', '--time-step', default=0.25, help="set the simulation time step (default=0.25s)")
     parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
 
