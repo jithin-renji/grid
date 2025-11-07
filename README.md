@@ -11,7 +11,9 @@ Run `./grid.py --help` for usage information.
 
 ## TODO
 - [ ] Newtonian gravity
-- [ ] Animated trajectories
+  - [x] Gravity for at least 2 objects
+  - [ ] Gravity for >2 objects
+- [x] Animated trajectories
 - [ ] Special relativity
 - [ ] General relativity
 
