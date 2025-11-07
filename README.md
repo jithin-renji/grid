@@ -1,6 +1,8 @@
 # Grid
 Grid is a simple Newtonian physics simulator. Currently, it animates trajectories for any 2-body system.
 
+https://github.com/user-attachments/assets/4afbeda6-4fd3-4b66-b4cd-7f51d1b64854
+
 ## Setup
 Make sure you have Python 3.14 installed. Install all of the required dependencies by running:
 ```
