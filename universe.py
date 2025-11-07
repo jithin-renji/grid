@@ -2,6 +2,7 @@ from umath import *
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 from time import sleep
 
@@ -40,8 +41,12 @@ class NewtonianUniverse:
         self.objs = objs                    # list of objects in this universe
         self.t = 0                          # universal time (seconds)
         self.collisions = []
+        self.begun = False
+        self.real_time = False
 
     def begin(self, until: float = 10, real_time: bool = False):
+        self.real_time = real_time
+        self.begun = True
         while self.t < until:
             if self.__objects_have_collided():
                 print("<<< COLLISION >>>")
@@ -121,20 +126,61 @@ class NewtonianUniverse:
                 
         return collision_found
 
+    # def show(self):
+    #     fig = plt.figure()
+    #     ax = fig.add_subplot(projection='3d')
+
+    #     for obj in self.objs:
+    #         ax.plot(obj.X[:-1], obj.Y[:-1], obj.Z[-1], '-', c=obj.color)
+
+    #     for obj in self.objs:
+    #         ax.scatter(obj.X[-1], obj.Y[-1], obj.Z[-1], c=obj.color)
+
+    #     ax.set_xlabel('X')
+    #     ax.set_ylabel('Y')
+    #     ax.set_zlabel('Z')
+
+    #     plt.show()
+
     def show(self):
+        if not self.begun:
+            print("Call begin to generate data for simulation.")
+            return 
+
         fig = plt.figure()
         ax = fig.add_subplot(projection='3d')
 
+        all_x = np.concat([obj.X for obj in self.objs])
+        all_y = np.concat([obj.Y for obj in self.objs])
+        all_z = np.concat([obj.Z for obj in self.objs])
+
+        ax.set_xlim(all_x.min(), all_x.max())
+        ax.set_ylim(all_y.min(), all_y.max())
+        ax.set_zlim(all_z.min(), all_z.max())
+
+        traj_lst = []
         for obj in self.objs:
-            ax.plot(obj.X[:-1], obj.Y[:-1], obj.Z[-1], '-', c=obj.color)
+            (trajectory,) = ax.plot([], [], [], '-', color=obj.color)
+            (obj_marker,) = ax.plot([], [], [], 'o', color=obj.color)
+            traj_lst.append((trajectory, obj_marker))
 
-        for obj in self.objs:
-            ax.scatter(obj.X[-1], obj.Y[-1], obj.Z[-1], c=obj.color)
+        print(f"traj_lst={traj_lst}")
 
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_zlabel('Z')
+        def update(frame):
+            for i, (trajectory, obj_marker) in enumerate(traj_lst):
+                trajectory.set_data(self.objs[i].X[:frame], self.objs[i].Y[:frame])
+                trajectory.set_3d_properties(self.objs[i].Z[:frame])
 
+                obj_marker.set_data(self.objs[i].X[frame-1:frame], self.objs[i].Y[frame-1:frame])
+                obj_marker.set_3d_properties(self.objs[i].Z[frame-1:frame])
+
+            ret = []
+            for t, o in traj_lst:
+                ret.extend([t, o])
+
+            return tuple(ret)
+
+        anim = FuncAnimation(fig, update, frames=len(self.objs[0].X), interval=self.step * 1000 if self.real_time else 1)
         plt.show()
 
     def log(self):
