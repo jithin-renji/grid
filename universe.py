@@ -139,6 +139,10 @@ class NewtonianUniverse:
         ax.set_ylim(all_y.min(), all_y.max())
         ax.set_zlim(all_z.min(), all_z.max())
 
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_zlabel('Z')
+
         traj_lst = []
         for obj in self.objs:
             (trajectory,) = ax.plot([], [], [], '-', color=obj.color)

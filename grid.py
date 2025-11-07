@@ -16,8 +16,8 @@ def main():
     universe = NewtonianUniverse(step=float(args.time_step), objs=[
         PointObject(
             pos=Vec3(3.844e8, 0, 0),
-            vel=Vec3(0, 0.01, 0),
-            mass=7e22,
+            vel=Vec3(0, 1022, 0),
+            mass=7e25,
             color='k'
         ),
         PointObject(
