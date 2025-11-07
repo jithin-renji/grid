@@ -35,6 +35,7 @@ class PointObject:
     def __str__(self):
         return f"PointObject(pos={self.__pos}, vel={self.vel}, mass={self.mass}, color={self.color})"
     
+# TODO: Separate begin() and show into 2 different threads.
 class NewtonianUniverse:
     def __init__(self, step: float = 0.25, objs: list[PointObject] = []):
         self.step = step                    # seconds
@@ -57,10 +58,6 @@ class NewtonianUniverse:
             # Update position according to the object's velocity
             self.__accelerate()
             self.__move_objects()
-
-            if real_time:
-                sleep(self.step)
-                self.log()
 
         # Print final stats
         print("===== END =====")
@@ -125,22 +122,6 @@ class NewtonianUniverse:
                     collision_found = True
                 
         return collision_found
-
-    # def show(self):
-    #     fig = plt.figure()
-    #     ax = fig.add_subplot(projection='3d')
-
-    #     for obj in self.objs:
-    #         ax.plot(obj.X[:-1], obj.Y[:-1], obj.Z[-1], '-', c=obj.color)
-
-    #     for obj in self.objs:
-    #         ax.scatter(obj.X[-1], obj.Y[-1], obj.Z[-1], c=obj.color)
-
-    #     ax.set_xlabel('X')
-    #     ax.set_ylabel('Y')
-    #     ax.set_zlabel('Z')
-
-    #     plt.show()
 
     def show(self):
         if not self.begun:
