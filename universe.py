@@ -126,10 +126,10 @@ class NewtonianUniverse:
         ax = fig.add_subplot(projection='3d')
 
         for obj in self.objs:
-            ax.scatter(obj.X[:-1], obj.Y[:-1], obj.Z[-1], c=obj.color)
+            ax.plot(obj.X[:-1], obj.Y[:-1], obj.Z[-1], '-', c=obj.color)
 
         for obj in self.objs:
-            ax.scatter(obj.X[-1], obj.Y[-1], obj.Z[-1], c='g')
+            ax.scatter(obj.X[-1], obj.Y[-1], obj.Z[-1], c=obj.color)
 
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
