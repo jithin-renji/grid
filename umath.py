@@ -24,6 +24,16 @@ class Vec3:
         
         return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
     
+    def __iadd__(self, other):
+        if not isinstance(other, Vec3):
+            return NotImplemented
+
+        self.x += other.x
+        self.y += other.y
+        self.z += other.z
+
+        return self
+
     def __sub__(self, other):
         if not isinstance(other, Vec3):
             return NotImplemented

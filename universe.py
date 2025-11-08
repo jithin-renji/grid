@@ -92,9 +92,11 @@ class NewtonianUniverse:
 
     def __update_net_acceleration(self):
         # Currently, the only force is gravity.
-        # FIXME: This works only when there are 2 objects
-        # in the universe.
         for obj1 in self.objs:
+            new_acc = Vec3()
+
+            # Compute partial acceleration changes due to
+            # each object
             for obj2 in self.objs:
                 if obj1 is obj2:
                     continue
@@ -103,9 +105,9 @@ class NewtonianUniverse:
                 r_hat = r_vec / r_vec.mag()
 
                 acc_mag = G * obj2.mass / (r_vec.mag() ** 2)
-                new_acc = acc_mag * r_hat
+                new_acc += acc_mag * r_hat
 
-                obj1.acc = new_acc
+            obj1.acc = new_acc
 
     def __handle_collisions(self):
         for obj1, obj2 in self.collisions:
@@ -123,6 +125,7 @@ class NewtonianUniverse:
                 
         return collision_found
 
+    # TODO: Add a way to disable trajectory lines
     def show(self):
         if not self.begun:
             print("Call begin to generate data for simulation.")
@@ -148,8 +151,6 @@ class NewtonianUniverse:
             (trajectory,) = ax.plot([], [], [], '-', color=obj.color)
             (obj_marker,) = ax.plot([], [], [], 'o', color=obj.color)
             traj_lst.append((trajectory, obj_marker))
-
-        print(f"traj_lst={traj_lst}")
 
         def update(frame):
             for i, (trajectory, obj_marker) in enumerate(traj_lst):

@@ -15,21 +15,35 @@ def main():
 
     universe = NewtonianUniverse(step=float(args.time_step), objs=[
         PointObject(
+            pos=Vec3(0, 0, 0),
+            vel=Vec3(1022, 0, 0),
+            mass=6e24,
+            color='r'
+        ),
+        PointObject(
             pos=Vec3(3.844e8, 0, 0),
             vel=Vec3(0, 1022, 0),
-            mass=7e25,
+            mass=6e24,
+            color='g'
+        ),
+        PointObject(
+            pos=Vec3(3.844e8, 3.844e8, 0),
+            vel=Vec3(-1022, 0, 0),
+            mass=6e24,
+            color='b'
+        ),
+        PointObject(
+            pos=Vec3(0, 3.844e8, 0),
+            vel=Vec3(0, -1022, 0),
+            mass=6e24,
             color='k'
         ),
         PointObject(
-            pos=Vec3(0, 0, 0),
-            mass=6e24
+            pos=Vec3(0, 3.844e8, 3.844e8),
+            vel=Vec3(0, -1022, 1022),
+            mass=6e24,
+            color='m'
         ),
-        # PointObject(
-        #     pos=Vec3(0, 3.844e8, 0),
-        #     vel=Vec3(0, 0, 1022),
-        #     mass=7e22,
-        #     color='c'
-        # )
     ])
 
     universe.begin(real_time=args.real_time, until=float(args.until))
