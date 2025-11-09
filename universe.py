@@ -126,7 +126,7 @@ class NewtonianUniverse:
         return collision_found
 
     # TODO: Add a way to disable trajectory lines
-    def show(self):
+    def show(self, show_trajectories=True, show_full_trajectories=False):
         if not self.begun:
             print("Call begin to generate data for simulation.")
             return 
@@ -153,9 +153,21 @@ class NewtonianUniverse:
             traj_lst.append((trajectory, obj_marker))
 
         def update(frame):
+            if show_full_trajectories:
+                start = 0
+
+            else:
+                start = max(0, frame - int(len(self.objs[0].X) * 0.1))
+
             for i, (trajectory, obj_marker) in enumerate(traj_lst):
-                trajectory.set_data(self.objs[i].X[:frame], self.objs[i].Y[:frame])
-                trajectory.set_3d_properties(self.objs[i].Z[:frame])
+                trajectory.set_data(self.objs[i].X[start:frame], self.objs[i].Y[start:frame])
+                trajectory.set_3d_properties(self.objs[i].Z[start:frame])
+
+                if show_trajectories:
+                    trajectory.set_alpha(0.5)
+
+                else:
+                    trajectory.set_alpha(0)
 
                 obj_marker.set_data(self.objs[i].X[frame-1:frame], self.objs[i].Y[frame-1:frame])
                 obj_marker.set_3d_properties(self.objs[i].Z[frame-1:frame])
