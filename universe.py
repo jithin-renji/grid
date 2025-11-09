@@ -3,6 +3,7 @@ from umath import *
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import yaml
 
 from time import sleep
 
@@ -43,11 +44,13 @@ class NewtonianUniverse:
         self.t = 0                          # universal time (seconds)
         self.collisions = []
         self.begun = False
+        self.until = 10
         self.real_time = False
 
     def begin(self, until: float = 10, real_time: bool = False):
         self.real_time = real_time
         self.begun = True
+        self.until = until
         while self.t < until:
             if self.__objects_have_collided():
                 print("<<< COLLISION >>>")
@@ -179,6 +182,10 @@ class NewtonianUniverse:
 
         anim = FuncAnimation(fig, update, frames=len(self.objs[0].X), interval=self.step * 1000 if self.real_time else 1)
         plt.show()
+
+    def save(self, fname: str):
+        with open(fname, 'w') as file:
+            yaml.dump(self, file)
 
     def log(self):
         print(f"t={self.t}")
