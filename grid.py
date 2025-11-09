@@ -33,6 +33,7 @@ def main():
     parser.add_argument('-x', '--hide-trajectory', default=False, action='store_true', help="hide trajectory lines from the simulation (disabled by default)")
     parser.add_argument('-f', '--show-full-trajectory', default=False, action='store_true', help="show trajectory lines from start to end (disabled by default)")
     parser.add_argument('--do-not-save', action='store_true', default=False, help='do not save simulation output')
+    parser.add_argument('--overwrite', default=False, action='store_true', help='overwrite output file if it already exists WITHOUT USER INPUT')
     parser.add_argument('-o', '--output', default='sim.yaml', help='simulation output file name (default=sim.yaml)')
     parser.add_argument('-s', '--time-step', default=0.25, help="set the simulation time step (default=0.25s)")
     parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
@@ -80,7 +81,7 @@ def main():
     if args.do_not_save:
         return
 
-    if path.exists(args.output):
+    if path.exists(args.output) and not args.overwrite:
         resp = input(f"File '{args.output}' already exists. Overwrite? [y/N] ")
         if not resp or resp[0].strip().lower()[0] != 'y':
             print(f"Will not overwrite.")
