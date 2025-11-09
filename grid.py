@@ -30,13 +30,14 @@ def to_seconds(num: str) -> float:
 def main():
     parser = argparse.ArgumentParser(description="A Newtonian physics simulator")
     parser.add_argument('-u', '--until', default=10, help="number of seconds to run the simulation (default=10s)")
+    parser.add_argument('-s', '--time-step', default=0.25, help="set the simulation time step (default=0.25s)")
+    parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
+    parser.add_argument('-k', '--skip-render', default=False, action='store_true', help="skip simulation rendering (disabled by default)")
     parser.add_argument('-x', '--hide-trajectory', default=False, action='store_true', help="hide trajectory lines from the simulation (disabled by default)")
     parser.add_argument('-f', '--show-full-trajectory', default=False, action='store_true', help="show trajectory lines from start to end (disabled by default)")
     parser.add_argument('--do-not-save', action='store_true', default=False, help='do not save simulation output')
     parser.add_argument('--overwrite', default=False, action='store_true', help='overwrite output file if it already exists WITHOUT USER INPUT')
     parser.add_argument('-o', '--output', default='sim.yaml', help='simulation output file name (default=sim.yaml)')
-    parser.add_argument('-s', '--time-step', default=0.25, help="set the simulation time step (default=0.25s)")
-    parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
 
     args = parser.parse_args()
     args.time_step = to_seconds(args.time_step)
@@ -76,7 +77,9 @@ def main():
     ])
 
     universe.begin(real_time=args.real_time, until=float(args.until))
-    universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
+
+    if not args.skip_render:
+        universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
 
     if args.do_not_save:
         return
