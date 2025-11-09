@@ -29,9 +29,52 @@ def to_seconds(num: str) -> float:
 
 def run_simulation_from_file(fname: str):
     with open(fname, 'r') as file:
-        universe = yaml.load(file, Loader=yaml.Loader)
+        universe = yaml.load(file, yaml.Loader)
 
     universe.show()
+
+def init_objs_from_file(fname: str):
+    with open(fname, 'r') as file:
+        initial_conditions = yaml.load(file, yaml.Loader)
+        print(initial_conditions)
+
+    objs = []
+    for key in initial_conditions:
+        if len(key) >= 6 and key[:6] == 'object':
+            obj = initial_conditions[key]
+            pos = Vec3()
+            vel = Vec3()
+            acc = Vec3()
+            mass = 0.0
+
+            for attribute in obj:
+                if attribute == 'pos':
+                    if type(obj[attribute]) != list:
+                        raise TypeError(f"Unexpected type f{type(obj[attribute])}")
+
+                    pos.x, pos.y, pos.z = float(obj[attribute][0]), float(obj[attribute][1]), float(obj[attribute][2])
+
+                elif attribute == 'vel':
+                    if type(obj[attribute]) != list:
+                        raise TypeError(f"Unexpected type f{type(obj[attribute])}")
+
+                    vel.x, vel.y, vel.z = float(obj[attribute][0]), float(obj[attribute][1]), float(obj[attribute][2])
+
+                elif attribute == 'acc':
+                    if type(obj[attribute]) != list:
+                        raise TypeError(f"Unexpected type f{type(obj[attribute])}")
+
+                    acc.x, acc.y, acc.z = float(obj[attribute][0]), float(obj[attribute][1]), float(obj[attribute][2])
+
+                elif attribute == 'mass':
+                    mass = float(obj['mass'])
+
+                elif attribute != 'color':
+                    raise AttributeError(f"Invalid attribute {attribute}")
+
+            objs.append(PointObject(pos, vel, acc, mass, obj['color']))
+
+    return objs
 
 def main():
     parser = argparse.ArgumentParser(description="A Newtonian physics simulator")
@@ -41,7 +84,8 @@ def main():
     parser.add_argument('-k', '--skip-render', default=False, action='store_true', help="skip simulation rendering (disabled by default)")
     parser.add_argument('-x', '--hide-trajectory', default=False, action='store_true', help="hide trajectory lines from the simulation (disabled by default)")
     parser.add_argument('-f', '--show-full-trajectory', default=False, action='store_true', help="show trajectory lines from start to end (disabled by default)")
-    parser.add_argument('-l', '--load', default=None, help='load precomputed simulation (default=init.yaml)')
+    parser.add_argument('-l', '--load', default=None, help='load precomputed simulation')
+    parser.add_argument('-i', '--input', help="input file name for initial conditions")
     parser.add_argument('-o', '--output', default='sim.yaml', help='simulation output file name (default=sim.yaml)')
     parser.add_argument('--do-not-save', action='store_true', default=False, help='do not save simulation output')
     parser.add_argument('--overwrite', default=False, action='store_true', help='overwrite output file if it already exists WITHOUT USER INPUT')
@@ -54,39 +98,7 @@ def main():
     args.time_step = to_seconds(args.time_step)
     args.until = to_seconds(args.until)
 
-
-    universe = NewtonianUniverse(step=float(args.time_step), objs=[
-        PointObject(
-            pos=Vec3(0, 0, 0),
-            vel=Vec3(1022, 0, 0),
-            mass=6e24,
-            color='r'
-        ),
-        PointObject(
-            pos=Vec3(3.844e8, 0, 0),
-            vel=Vec3(0, 1022, 0),
-            mass=6e24,
-            color='g'
-        ),
-        PointObject(
-            pos=Vec3(3.844e8, 3.844e8, 0),
-            vel=Vec3(-1022, 0, 0),
-            mass=6e24,
-            color='b'
-        ),
-        PointObject(
-            pos=Vec3(0, 3.844e8, 0),
-            vel=Vec3(0, -1022, 0),
-            mass=6e24,
-            color='k'
-        ),
-        PointObject(
-            pos=Vec3(0, 3.844e8, 3.844e8),
-            vel=Vec3(0, -1022, 1022),
-            mass=6e24,
-            color='m'
-        ),
-    ])
+    universe = NewtonianUniverse(step=float(args.time_step), objs=init_objs_from_file(args.input))
 
     universe.begin(real_time=args.real_time, until=float(args.until))
 
