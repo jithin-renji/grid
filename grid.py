@@ -4,6 +4,7 @@ from universe import *
 from umath import *
 
 import argparse
+from os import path
 
 def to_seconds(num: str) -> float:
     if num[-1].isdigit():
@@ -31,6 +32,8 @@ def main():
     parser.add_argument('-u', '--until', default=10, help="number of seconds to run the simulation (default=10s)")
     parser.add_argument('-x', '--hide-trajectory', default=False, action='store_true', help="hide trajectory lines from the simulation (disabled by default)")
     parser.add_argument('-f', '--show-full-trajectory', default=False, action='store_true', help="show trajectory lines from start to end (disabled by default)")
+    parser.add_argument('--do-not-save', action='store_true', default=False, help='do not save simulation output')
+    parser.add_argument('-o', '--output', default='sim.yaml', help='simulation output file name (default=sim.yaml)')
     parser.add_argument('-s', '--time-step', default=0.25, help="set the simulation time step (default=0.25s)")
     parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
 
@@ -72,8 +75,21 @@ def main():
     ])
 
     universe.begin(real_time=args.real_time, until=float(args.until))
-    # universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
-    universe.save('sim.yaml')
+    universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
+
+    if args.do_not_save:
+        return
+
+    if path.exists(args.output):
+        resp = input(f"File '{args.output}' already exists. Overwrite? [y/N] ")
+        if not resp or resp[0].strip().lower()[0] != 'y':
+            print(f"Will not overwrite.")
+            return
+
+    print(f"Saving output to '{args.output}' ...")
+    universe.save(args.output)
+
+    print("Done.")
 
 if __name__ == '__main__':
     main()
