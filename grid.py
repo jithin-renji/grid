@@ -5,6 +5,27 @@ from umath import *
 
 import argparse
 
+def to_seconds(num: str) -> float:
+    if num[-1].isdigit():
+        return float(num)
+    
+    elif num[-1] == 's':
+        return float(num[:-1])
+
+    elif num[-1] == 'm':
+        return 60 * float(num[:-1])
+
+    elif num[-1] == 'h':
+        return 60 * 60 * float(num[:-1])
+
+    elif num[-1] == 'd':
+        return 60 * 60 * 24 * float(num[:-1])
+
+    elif num[-1] == 'y':
+        return 60 * 60 * 24 * 365.25 * float(num[:-1])
+
+    raise ValueError(f"Invalid suffix '{num[-1]}' in value '{num}'")
+
 def main():
     parser = argparse.ArgumentParser(description="A Newtonian physics simulator")
     parser.add_argument('-u', '--until', default=10, help="number of seconds to run the simulation (default=10s)")
@@ -12,6 +33,8 @@ def main():
     parser.add_argument('-r', '--real-time', action='store_true', help="run the simulation in real time")
 
     args = parser.parse_args()
+    args.time_step = to_seconds(args.time_step)
+    args.until = to_seconds(args.until)
 
     universe = NewtonianUniverse(step=float(args.time_step), objs=[
         PointObject(
