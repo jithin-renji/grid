@@ -72,7 +72,8 @@ def main():
     ])
 
     universe.begin(real_time=args.real_time, until=float(args.until))
-    universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
+    # universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
+    universe.save('sim.yaml')
 
 if __name__ == '__main__':
     main()

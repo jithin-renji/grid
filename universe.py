@@ -3,6 +3,7 @@ from umath import *
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+import yaml
 
 from time import sleep
 
@@ -179,6 +180,10 @@ class NewtonianUniverse:
 
         anim = FuncAnimation(fig, update, frames=len(self.objs[0].X), interval=self.step * 1000 if self.real_time else 1)
         plt.show()
+
+    def save(self, fname: str):
+        with open(fname, 'w') as file:
+            yaml.dump(self, file)
 
     def log(self):
         print(f"t={self.t}")
