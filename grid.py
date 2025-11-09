@@ -27,6 +27,12 @@ def to_seconds(num: str) -> float:
 
     raise ValueError(f"Invalid suffix '{num[-1]}' in value '{num}'")
 
+def run_simulation_from_file(fname: str):
+    with open(fname, 'r') as file:
+        universe = yaml.load(file, Loader=yaml.Loader)
+
+    universe.show()
+
 def main():
     parser = argparse.ArgumentParser(description="A Newtonian physics simulator")
     parser.add_argument('-u', '--until', default=10, help="number of seconds to run the simulation (default=10s)")
@@ -35,13 +41,19 @@ def main():
     parser.add_argument('-k', '--skip-render', default=False, action='store_true', help="skip simulation rendering (disabled by default)")
     parser.add_argument('-x', '--hide-trajectory', default=False, action='store_true', help="hide trajectory lines from the simulation (disabled by default)")
     parser.add_argument('-f', '--show-full-trajectory', default=False, action='store_true', help="show trajectory lines from start to end (disabled by default)")
+    parser.add_argument('-l', '--load', default=None, help='load precomputed simulation (default=init.yaml)')
+    parser.add_argument('-o', '--output', default='sim.yaml', help='simulation output file name (default=sim.yaml)')
     parser.add_argument('--do-not-save', action='store_true', default=False, help='do not save simulation output')
     parser.add_argument('--overwrite', default=False, action='store_true', help='overwrite output file if it already exists WITHOUT USER INPUT')
-    parser.add_argument('-o', '--output', default='sim.yaml', help='simulation output file name (default=sim.yaml)')
 
     args = parser.parse_args()
+    if args.load is not None:
+        run_simulation_from_file(args.load)
+        return
+
     args.time_step = to_seconds(args.time_step)
     args.until = to_seconds(args.until)
+
 
     universe = NewtonianUniverse(step=float(args.time_step), objs=[
         PointObject(

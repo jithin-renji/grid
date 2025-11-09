@@ -44,11 +44,13 @@ class NewtonianUniverse:
         self.t = 0                          # universal time (seconds)
         self.collisions = []
         self.begun = False
+        self.until = 10
         self.real_time = False
 
     def begin(self, until: float = 10, real_time: bool = False):
         self.real_time = real_time
         self.begun = True
+        self.until = until
         while self.t < until:
             if self.__objects_have_collided():
                 print("<<< COLLISION >>>")
