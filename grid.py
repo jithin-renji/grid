@@ -7,6 +7,9 @@ import argparse
 from os import path
 
 def to_seconds(num: str) -> float:
+    if isinstance(num, float) or isinstance(num, int):
+        return float(num)
+
     if num[-1].isdigit():
         return float(num)
     
@@ -91,15 +94,35 @@ def main():
     parser.add_argument('--overwrite', default=False, action='store_true', help='overwrite output file if it already exists WITHOUT USER INPUT')
 
     args = parser.parse_args()
-    if args.load is not None:
-        run_simulation_from_file(args.load)
+    if args.load:
+        try:
+            run_simulation_from_file(args.load)
+
+        except Exception as e:
+            print(f"error: {e}")
+
         return
 
-    args.time_step = to_seconds(args.time_step)
-    args.until = to_seconds(args.until)
+    if not args.input:
+        print(f"error: missing input file: Use '-i' to specify input file")
+        return
 
-    universe = NewtonianUniverse(step=float(args.time_step), objs=init_objs_from_file(args.input))
+    try:
+        args.time_step = to_seconds(args.time_step)
+        args.until = to_seconds(args.until)
 
+    except ValueError as e:
+        print(f"error: {e}")
+        return
+    
+    try:
+        objs=init_objs_from_file(args.input)
+
+    except Exception as e:
+        print(f"error: {e}")
+        return
+
+    universe = NewtonianUniverse(step=float(args.time_step), objs=objs)
     universe.begin(real_time=args.real_time, until=float(args.until))
 
     if not args.skip_render:
