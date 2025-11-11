@@ -86,9 +86,6 @@ class NewtonianUniverse:
     def __accelerate(self):
         self.__update_net_acceleration()
         for obj in self.objs:
-            if obj.acc == 0:
-                continue
-
             cur_vel = obj.vel
             new_vel = cur_vel + Vec3(obj.acc.x * self.step, obj.acc.y * self.step, obj.acc.z * self.step)
             obj.vel = new_vel
