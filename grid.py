@@ -10,23 +10,14 @@ def to_seconds(num: str) -> float:
     if isinstance(num, float) or isinstance(num, int):
         return float(num)
 
+    suffixes = {'s': 1, 'm': 60, 'h': 60 * 60, 'd': 60 * 60 * 24, 'y': 60 * 60 * 24 * 365.25}
+    num = num.strip()
+
     if num[-1].isdigit():
         return float(num)
-    
-    elif num[-1] == 's':
-        return float(num[:-1])
 
-    elif num[-1] == 'm':
-        return 60 * float(num[:-1])
-
-    elif num[-1] == 'h':
-        return 60 * 60 * float(num[:-1])
-
-    elif num[-1] == 'd':
-        return 60 * 60 * 24 * float(num[:-1])
-
-    elif num[-1] == 'y':
-        return 60 * 60 * 24 * 365.25 * float(num[:-1])
+    elif num[-1] in suffixes:
+        return suffixes[num[-1]] * float(num[:-1])
 
     raise ValueError(f"Invalid suffix '{num[-1]}' in value '{num}'")
 
