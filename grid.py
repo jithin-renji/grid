@@ -39,10 +39,6 @@ def init_objs_from_file(fname: str) -> list[PointObject]:
         if len(key) >= 6 and key[:6] == 'object':
             obj = initial_conditions[key]
             props = {'pos': Vec3(), 'vel': Vec3(), 'acc': Vec3(), 'mass': 0.0}
-            pos = Vec3()
-            vel = Vec3()
-            acc = Vec3()
-            mass = 0.0
 
             for attr in obj:
                 if attr in ('pos', 'vel', 'acc'):
