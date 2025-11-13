@@ -30,11 +30,11 @@ def to_seconds(num: str) -> float:
 
     raise ValueError(f"Invalid suffix '{num[-1]}' in value '{num}'")
 
-def run_simulation_from_file(fname: str):
+def load_simulation_from_file(fname: str) -> NewtonianUniverse:
     with open(fname, 'r') as file:
         universe = yaml.load(file, yaml.Loader)
 
-    universe.show()
+    return universe
 
 def init_objs_from_file(fname: str):
     with open(fname, 'r') as file:
@@ -96,7 +96,8 @@ def main():
     args = parser.parse_args()
     if args.load:
         try:
-            run_simulation_from_file(args.load)
+            universe = load_simulation_from_file(args.load)
+            universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
 
         except Exception as e:
             print(f"error: {e}")
