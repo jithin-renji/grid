@@ -36,7 +36,7 @@ def load_simulation_from_file(fname: str) -> NewtonianUniverse:
 
     return universe
 
-def init_objs_from_file(fname: str):
+def init_objs_from_file(fname: str) -> list[PointObject]:
     with open(fname, 'r') as file:
         initial_conditions = yaml.load(file, yaml.Loader)
         print(initial_conditions)
