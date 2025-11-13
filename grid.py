@@ -38,37 +38,26 @@ def init_objs_from_file(fname: str) -> list[PointObject]:
     for key in initial_conditions:
         if len(key) >= 6 and key[:6] == 'object':
             obj = initial_conditions[key]
+            props = {'pos': Vec3(), 'vel': Vec3(), 'acc': Vec3(), 'mass': 0.0}
             pos = Vec3()
             vel = Vec3()
             acc = Vec3()
             mass = 0.0
 
-            for attribute in obj:
-                if attribute == 'pos':
-                    if type(obj[attribute]) != list:
-                        raise TypeError(f"Unexpected type f{type(obj[attribute])}")
+            for attr in obj:
+                if attr in ('pos', 'vel', 'acc'):
+                    if type(obj[attr]) != list:
+                        raise TypeError(f"Unexpected type f{type(obj[attr])}")
 
-                    pos.x, pos.y, pos.z = float(obj[attribute][0]), float(obj[attribute][1]), float(obj[attribute][2])
+                    props[attr].x, props[attr].y, props[attr].z = float(obj[attr][0]), float(obj[attr][1]), float(obj[attr][2])
 
-                elif attribute == 'vel':
-                    if type(obj[attribute]) != list:
-                        raise TypeError(f"Unexpected type f{type(obj[attribute])}")
+                elif attr == 'mass':
+                    props['mass'] = float(obj['mass'])
 
-                    vel.x, vel.y, vel.z = float(obj[attribute][0]), float(obj[attribute][1]), float(obj[attribute][2])
+                elif attr != 'color':
+                    raise AttributeError(f"Invalid attribute {attr}")
 
-                elif attribute == 'acc':
-                    if type(obj[attribute]) != list:
-                        raise TypeError(f"Unexpected type f{type(obj[attribute])}")
-
-                    acc.x, acc.y, acc.z = float(obj[attribute][0]), float(obj[attribute][1]), float(obj[attribute][2])
-
-                elif attribute == 'mass':
-                    mass = float(obj['mass'])
-
-                elif attribute != 'color':
-                    raise AttributeError(f"Invalid attribute {attribute}")
-
-            new_obj = PointObject(pos, vel, acc, mass, obj['color'])
+            new_obj = PointObject(props['pos'], props['vel'], props['acc'], props['mass'], obj['color'])
             print(f"Loaded {new_obj}")
 
             objs.append(new_obj)
