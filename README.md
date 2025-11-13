@@ -15,6 +15,7 @@ Run `./grid.py --help` for usage information.
 - [x] Newtonian gravity
   - [x] Gravity for 2 bodies
   - [x] Gravity for n bodies
+  - [ ] Proper scaling to show accurate orbit shapes
 - [x] Animated trajectories
 - [ ] Special relativity
 - [ ] General relativity
