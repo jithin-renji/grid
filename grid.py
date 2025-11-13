@@ -30,16 +30,18 @@ def to_seconds(num: str) -> float:
 
     raise ValueError(f"Invalid suffix '{num[-1]}' in value '{num}'")
 
-def load_simulation_from_file(fname: str) -> NewtonianUniverse:
+def load_universe_from_file(fname: str) -> NewtonianUniverse:
+    print(f"Loading universe from '{fname}' ...")
     with open(fname, 'r') as file:
         universe = yaml.load(file, yaml.Loader)
+
+    print("Done.")
 
     return universe
 
 def init_objs_from_file(fname: str) -> list[PointObject]:
     with open(fname, 'r') as file:
         initial_conditions = yaml.load(file, yaml.Loader)
-        print(initial_conditions)
 
     objs = []
     for key in initial_conditions:
@@ -75,7 +77,10 @@ def init_objs_from_file(fname: str) -> list[PointObject]:
                 elif attribute != 'color':
                     raise AttributeError(f"Invalid attribute {attribute}")
 
-            objs.append(PointObject(pos, vel, acc, mass, obj['color']))
+            new_obj = PointObject(pos, vel, acc, mass, obj['color'])
+            print(f"Loaded {new_obj}")
+
+            objs.append(new_obj)
 
     return objs
 
@@ -96,7 +101,7 @@ def main():
     args = parser.parse_args()
     if args.load:
         try:
-            universe = load_simulation_from_file(args.load)
+            universe = load_universe_from_file(args.load)
             universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
 
         except Exception as e:
