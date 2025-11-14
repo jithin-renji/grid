@@ -68,8 +68,9 @@ class TestVec3(unittest.TestCase):
 
 class TestPointObject(unittest.TestCase):
     def test_init(self):
-        po = PointObject()
+        po = PointObject('o')
         self.assertEqual(po._PointObject__pos, Vec3(0, 0, 0))
+        self.assertEqual(po.name, 'o')
         self.assertEqual(po.vel, Vec3(0, 0, 0))
         self.assertEqual(po.mass, 1.0)
         self.assertEqual(po.X, [0.0])
@@ -77,7 +78,8 @@ class TestPointObject(unittest.TestCase):
         self.assertEqual(po.Z, [0.0])
         self.assertEqual(po.color, 'r')
 
-        po = PointObject(pos=Vec3(1, 2, 3), vel=Vec3(4, 5, 6), mass=12, color='k')
+        po = PointObject('object1', pos=Vec3(1, 2, 3), vel=Vec3(4, 5, 6), mass=12, color='k')
+        self.assertEqual(po.name, 'object1')
         self.assertEqual(po._PointObject__pos, Vec3(1, 2, 3))
         self.assertEqual(po.vel, Vec3(4, 5, 6))
         self.assertEqual(po.mass, 12.0)
@@ -87,14 +89,14 @@ class TestPointObject(unittest.TestCase):
         self.assertEqual(po.color, 'k')
 
     def test_get_pos(self):
-        po = PointObject(pos=Vec3(12, 24, 48))
+        po = PointObject('object1', pos=Vec3(12, 24, 48))
         self.assertEqual(po.get_pos(), Vec3(12, 24, 48))
 
-        po = PointObject(pos=Vec3(1, 2, 3), vel=Vec3(1, 2, 3))
+        po = PointObject('object1', pos=Vec3(1, 2, 3), vel=Vec3(1, 2, 3))
         self.assertEqual(po.get_pos(), Vec3(1, 2, 3))
 
     def test_set_pos(self):
-        po = PointObject()
+        po = PointObject('object1')
         po.set_pos(Vec3(12, 12, 12))
         self.assertEqual(po._PointObject__pos, Vec3(12, 12, 12))
         self.assertEqual(po.X, [0.0, 12.0])
@@ -108,8 +110,8 @@ class TestPointObject(unittest.TestCase):
         self.assertEqual(po.Z, [0.0, 12.0, 3.0])
 
     def test_str(self):
-        po = PointObject(pos=Vec3(1, 2, 3), vel=Vec3(4, 5, 6), mass=21, color='k')
-        self.assertEqual(str(po), f"PointObject(pos=(1.0, 2.0, 3.0), vel=(4.0, 5.0, 6.0), mass=21.0, color=k)")
+        po = PointObject('object1', pos=Vec3(1, 2, 3), vel=Vec3(4, 5, 6), mass=21, color='k')
+        self.assertEqual(str(po), f"PointObject(name=object1, pos=(1.0, 2.0, 3.0), vel=(4.0, 5.0, 6.0), mass=21.0, color=k)")
 
 # TODO: Test the NewtonianUniverse class
 
