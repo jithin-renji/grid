@@ -78,7 +78,7 @@ def main():
     if args.load:
         try:
             universe = load_universe_from_file(args.load)
-            universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
+            universe.show(real_time=args.real_time, hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
 
         except Exception as e:
             print(f"error: {e}")
@@ -105,10 +105,10 @@ def main():
         return
 
     universe = NewtonianUniverse(step=float(args.time_step), objs=objs)
-    universe.begin(real_time=args.real_time, until=float(args.until))
+    universe.begin(until=float(args.until))
 
     if not args.skip_render:
-        universe.show(hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
+        universe.show(real_time=args.real_time, hide_trajectory=args.hide_trajectory, show_full_trajectory=args.show_full_trajectory)
 
     if args.do_not_save:
         return

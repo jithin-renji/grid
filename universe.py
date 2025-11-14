@@ -45,10 +45,8 @@ class NewtonianUniverse:
         self.collisions = []
         self.begun = False
         self.until = 10
-        self.real_time = False
 
-    def begin(self, until: float = 10, real_time: bool = False):
-        self.real_time = real_time
+    def begin(self, until: float = 10):
         self.begun = True
         self.until = until
         while self.t < until:
@@ -125,7 +123,7 @@ class NewtonianUniverse:
                 
         return collision_found
 
-    def show(self, hide_trajectory=False, show_full_trajectory=False):
+    def show(self, real_time=False, show_full_trajectory=False, hide_trajectory=False):
         if not self.begun:
             print("Call begin to generate data for simulation.")
             return 
@@ -145,40 +143,41 @@ class NewtonianUniverse:
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
 
-        traj_lst = []
+        self.__traj_lst = []
         for obj in self.objs:
             (trajectory,) = ax.plot([], [], [], '-', color=obj.color)
             (obj_marker,) = ax.plot([], [], [], 'o', color=obj.color)
-            traj_lst.append((trajectory, obj_marker))
+            self.__traj_lst.append((trajectory, obj_marker))
 
-        def update(frame):
-            if show_full_trajectory:
-                start = 0
+        anim = FuncAnimation(fig, lambda frame: self.__update(frame, show_full_trajectory, hide_trajectory),
+                             frames=len(self.objs[0].X), interval=self.step * 1000 if real_time else 1)
+        plt.show()
+
+    def __update(self, frame: int, show_full_trajectory: bool, hide_trajectory: bool) -> tuple:
+        if show_full_trajectory:
+            start = 0
+
+        else:
+            start = max(0, frame - int(len(self.objs[0].X) * 0.1))
+
+        for i, (trajectory, obj_marker) in enumerate(self.__traj_lst):
+            trajectory.set_data(self.objs[i].X[start:frame], self.objs[i].Y[start:frame])
+            trajectory.set_3d_properties(self.objs[i].Z[start:frame])
+
+            if hide_trajectory:
+                trajectory.set_alpha(0)
 
             else:
-                start = max(0, frame - int(len(self.objs[0].X) * 0.1))
+                trajectory.set_alpha(0.5)
 
-            for i, (trajectory, obj_marker) in enumerate(traj_lst):
-                trajectory.set_data(self.objs[i].X[start:frame], self.objs[i].Y[start:frame])
-                trajectory.set_3d_properties(self.objs[i].Z[start:frame])
+            obj_marker.set_data(self.objs[i].X[frame-1:frame], self.objs[i].Y[frame-1:frame])
+            obj_marker.set_3d_properties(self.objs[i].Z[frame-1:frame])
 
-                if hide_trajectory:
-                    trajectory.set_alpha(0)
+        ret = []
+        for t, o in self.__traj_lst:
+            ret.extend([t, o])
 
-                else:
-                    trajectory.set_alpha(0.5)
-
-                obj_marker.set_data(self.objs[i].X[frame-1:frame], self.objs[i].Y[frame-1:frame])
-                obj_marker.set_3d_properties(self.objs[i].Z[frame-1:frame])
-
-            ret = []
-            for t, o in traj_lst:
-                ret.extend([t, o])
-
-            return tuple(ret)
-
-        anim = FuncAnimation(fig, update, frames=len(self.objs[0].X), interval=self.step * 1000 if self.real_time else 1)
-        plt.show()
+        return tuple(ret)
 
     def save(self, fname: str):
         with open(fname, 'w') as file:
