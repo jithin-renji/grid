@@ -180,8 +180,13 @@ class NewtonianUniverse:
         return tuple(ret)
 
     def save(self, fname: str):
+        export = {
+            'step': self.step,
+            'objs': self.objs,
+        }
+
         with open(fname, 'w') as file:
-            yaml.dump(self, file)
+            yaml.dump(export, file)
 
     def log(self):
         print(f"t={self.t}")

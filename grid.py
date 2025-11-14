@@ -24,9 +24,12 @@ def to_seconds(num: str) -> float:
 def load_universe_from_file(fname: str) -> NewtonianUniverse:
     print(f"Loading universe from '{fname}' ...")
     with open(fname, 'r') as file:
-        universe = yaml.load(file, yaml.Loader)
+        params = yaml.load(file, yaml.Loader)
 
     print("Done.")
+
+    universe = NewtonianUniverse(params['step'], params['objs'])
+    universe.begun = True
 
     return universe
 
