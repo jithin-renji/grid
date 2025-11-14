@@ -39,9 +39,9 @@ def init_objs_from_file(fname: str) -> list[PointObject]:
 
     objs = []
     for key in initial_conditions:
-        if len(key) >= 6 and key[:6] == 'object':
+        if len(key) >= 7 and key[:7] == 'object_':
             obj = initial_conditions[key]
-            props = {'pos': Vec3(), 'vel': Vec3(), 'acc': Vec3(), 'mass': 0.0}
+            props = {'name': key[7:], 'pos': Vec3(), 'vel': Vec3(), 'acc': Vec3(), 'mass': 0.0}
 
             for attr in obj:
                 if attr in ('pos', 'vel', 'acc'):
@@ -50,16 +50,19 @@ def init_objs_from_file(fname: str) -> list[PointObject]:
 
                     props[attr].x, props[attr].y, props[attr].z = float(obj[attr][0]), float(obj[attr][1]), float(obj[attr][2])
 
-                elif attr == 'mass':
+                elif attr in ('mass', 'color'):
                     props['mass'] = float(obj['mass'])
 
-                elif attr != 'color':
+                else:
                     raise AttributeError(f"Invalid attribute {attr}")
 
-            new_obj = PointObject(props['pos'], props['vel'], props['acc'], props['mass'], obj['color'])
-            print(f"Loaded {new_obj}")
+            new_obj = PointObject(props['name'], props['pos'], props['vel'], props['acc'], props['mass'], obj['color'])
+            print(f"Loaded {new_obj.name}")
 
             objs.append(new_obj)
+
+        else:
+            raise KeyError(f"Unexpected key: {key}")
 
     return objs
 
@@ -101,7 +104,7 @@ def main():
         return
     
     try:
-        objs=init_objs_from_file(args.input)
+        objs = init_objs_from_file(args.input)
 
     except Exception as e:
         print(f"error: {e}")

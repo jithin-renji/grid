@@ -10,8 +10,9 @@ from time import sleep
 G = 6.6743e-11
 
 class PointObject:
-    def __init__(self, pos: Vec3 = Vec3(), vel: Vec3 = Vec3(), acc: Vec3 = Vec3(),
+    def __init__(self, name: str, pos: Vec3 = Vec3(), vel: Vec3 = Vec3(), acc: Vec3 = Vec3(),
                  mass: float = 1, color: str = 'r'):
+        self.name = name
         self.__pos = pos                        # m
         self.mass = float(mass)                 # kg
         self.vel = vel                          # m/s
@@ -34,7 +35,7 @@ class PointObject:
         self.Z.append(new_pos.z)
 
     def __str__(self):
-        return f"PointObject(pos={self.__pos}, vel={self.vel}, mass={self.mass}, color={self.color})"
+        return f"PointObject(name={self.name}, pos={self.__pos}, vel={self.vel}, mass={self.mass}, color={self.color})"
     
 # TODO: Separate begin() and show into 2 different threads.
 class NewtonianUniverse:
